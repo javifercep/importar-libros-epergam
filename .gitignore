@@ -1,0 +1,13 @@
+# WordPress plugin development
+*.log
+*.zip
+*.tar.gz
+*.tmp
+.DS_Store
+node_modules/
+vendor/
+.env
+.idea/
+.vscode/
+__pycache__/
+*.swp
