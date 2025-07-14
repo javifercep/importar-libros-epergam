@@ -10,10 +10,15 @@ add_shortcode('carrusel_libros', function () {
     ob_start(); ?>
     <div class="swiper mySwiper">
         <div class="swiper-wrapper">
-            <?php while ($libros->have_posts()) : $libros->the_post(); ?>
+            <?php while ($libros->have_posts()) : $libros->the_post(); 
+                $ficha = get_post_meta(get_the_ID(), '_ficha_url', true); ?>
                 <div class="swiper-slide">
                     <div class="libro-slide">
-                        <?php if (has_post_thumbnail()) the_post_thumbnail('medium'); ?>
+                        <?php if (has_post_thumbnail()) : ?>
+                            <a href="<?php echo esc_url($ficha); ?>" target="_blank" rel="noopener">
+                                <?php the_post_thumbnail('medium'); ?>
+                            </a>
+                        <?php endif; ?>
                         <h3><?php the_title(); ?></h3>
                     </div>
                 </div>

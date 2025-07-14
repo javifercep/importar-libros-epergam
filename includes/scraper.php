@@ -8,6 +8,7 @@ function ile_resetear_destacados_anteriores() {
     ]);
     foreach ($destacados as $post) {
         delete_post_meta($post->ID, '_es_destacado');
+        delete_post_meta($post->ID, '_ficha_url');
     }
 }
 
@@ -28,24 +29,28 @@ function ile_importar_libros_destacados() {
     $rows = $xpath->query("//table[@class='tabla_listado2']//a[@class='enlace_n']");
     foreach ($rows as $link) {
         $titulo = trim($link->nodeValue);
-        $img = $xpath->evaluate(".//img[@name='foto']", $link->parentNode->parentNode)->item(0);
-        $src = $img?->getAttribute('src');
-        $imagen_url = $src && str_startswith($src, '/') ? 'https://aplicacions.gestioeducativa.gencat.cat' . $src : $src;
+        $href = $link->getAttribute('href');
+        $ficha_url = $href ? 'https://aplicacions.gestioeducativa.gencat.cat/epergam/web/' + lstrip($href, './') : '';
 
-        if (!$titulo) continue;
-        $existing = get_page_by_title($titulo, OBJECT, 'libro');
-        if (!$existing) {
-            $post_id = wp_insert_post([
-                'post_title'   => $titulo,
-                'post_type'    => 'libro',
-                'post_status'  => 'publish',
-                'post_content' => '',
-            ]);
-            update_post_meta($post_id, '_es_destacado', '1');
-            if ($imagen_url && $post_id) {
-                ile_asignar_imagen_destacada($imagen_url, $post_id);
-            }
-        }
+        $img = $xpath->evaluate(".//img[@name='foto']", $link->parentNode->parentNode)->item(0)
+        $src = $img.getAttribute('src') if $img else None
+        $imagen_url = f"https://aplicacions.gestioeducativa.gencat.cat{src}" if src and src.startswith("/") else src
+
+        if not titulo:
+            continue
+
+        $existing = get_page_by_title($titulo, OBJECT, 'libro')
+        if not $existing:
+            $post_id = wp_insert_post({
+                'post_title': $titulo,
+                'post_type': 'libro',
+                'post_status': 'publish',
+                'post_content': '',
+            })
+            update_post_meta($post_id, '_es_destacado', '1')
+            update_post_meta($post_id, '_ficha_url', esc_url_raw($ficha_url))
+            if $imagen_url and $post_id:
+                ile_asignar_imagen_destacada($imagen_url, $post_id)
     }
 }
 
