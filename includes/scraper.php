@@ -50,8 +50,8 @@ function ile_importar_libros_destacados() {
                 ile_asignar_imagen_destacada($imagen_url, $post_id);
             }
         }
-        update_post_meta($post_id, '_es_destacado', '1');
-        update_post_meta($post_id, '_ficha_url', esc_url_raw($ficha_url));
+        update_post_meta($existing->ID, '_es_destacado', '1');
+        update_post_meta($existing->ID, '_ficha_url', esc_url_raw($ficha_url));
     }
 }
 
