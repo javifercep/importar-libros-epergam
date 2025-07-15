@@ -30,27 +30,28 @@ function ile_importar_libros_destacados() {
     foreach ($rows as $link) {
         $titulo = trim($link->nodeValue);
         $href = $link->getAttribute('href');
-        $ficha_url = $href ? 'https://aplicacions.gestioeducativa.gencat.cat/epergam/web/' + lstrip($href, './') : '';
+        $ficha_url = $href ? 'https://aplicacions.gestioeducativa.gencat.cat/epergam/' . ltrim($href, './') : '';
 
-        $img = $xpath->evaluate(".//img[@name='foto']", $link->parentNode->parentNode)->item(0)
-        $src = $img.getAttribute('src') if $img else None
-        $imagen_url = f"https://aplicacions.gestioeducativa.gencat.cat{src}" if src and src.startswith("/") else src
+        $img = $xpath->evaluate(".//img[@name='foto']", $link->parentNode->parentNode)->item(0);
+        $src = $img ? $img->getAttribute('src') : '';
+        $imagen_url = $src && str_starts_with($src, '/') ? 'https://aplicacions.gestioeducativa.gencat.cat' . $src : $src;
 
-        if not titulo:
-            continue
+        if (!$titulo) continue;
 
-        $existing = get_page_by_title($titulo, OBJECT, 'libro')
-        if not $existing:
-            $post_id = wp_insert_post({
-                'post_title': $titulo,
-                'post_type': 'libro',
-                'post_status': 'publish',
-                'post_content': '',
-            })
-            update_post_meta($post_id, '_es_destacado', '1')
-            update_post_meta($post_id, '_ficha_url', esc_url_raw($ficha_url))
-            if $imagen_url and $post_id:
-                ile_asignar_imagen_destacada($imagen_url, $post_id)
+        $existing = get_page_by_title($titulo, OBJECT, 'libro');
+        if (!$existing) {
+            $post_id = wp_insert_post([
+                'post_title'   => $titulo,
+                'post_type'    => 'libro',
+                'post_status'  => 'publish',
+                'post_content' => '',
+            ]);
+            if ($imagen_url && $post_id) {
+                ile_asignar_imagen_destacada($imagen_url, $post_id);
+            }
+        }
+        update_post_meta($post_id, '_es_destacado', '1');
+        update_post_meta($post_id, '_ficha_url', esc_url_raw($ficha_url));
     }
 }
 

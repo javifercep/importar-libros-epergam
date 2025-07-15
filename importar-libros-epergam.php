@@ -2,8 +2,8 @@
 /*
 Plugin Name: Importar Libros Destacados ePèrgam
 Description: Importa libros destacados desde ePèrgam y los muestra en un carrusel.
-Version: 1.3
-Author: Tu Nombre
+Version: 1.1
+Author: Javier Fernández
 */
 
 defined('ABSPATH') || exit;
